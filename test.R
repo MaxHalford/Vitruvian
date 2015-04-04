@@ -1,7 +1,7 @@
 library('FactoMineR')
 
 # Read the data
-data = read.csv('/home/max/Dropbox/Courses/L3/Etudes de Cas Statistiques/Vitruvian man/perfectionSID.csv')
+data = read.csv('perfectionSID.csv')
 
 # Calculate ratios
 data['hauteur/envergure'] = data['hauteur'] / data['envergure']
@@ -28,7 +28,7 @@ hcpc = HCPC(acp)
 # Classement des élèves par rapport aux deux premiers axes
 centre = acp$ind.sup$coord[c(1, 2)]
 eleves = acp$ind$coord
-eleves['score'] = sqrt((eleves[,1] - centre[1]) ** 2 + (eleves[,2] - centre[2]) ** 2)
+scores = (eleves[,1] - rep(centre[1], 23) ** 2 + (eleves[,2] - rep(centre[2], 23)) ** 2) ** 1/2
 
 # Test 1 : hauteur/envergure == 1
 test1 = t.test(data[['hauteur/envergure']], mu = 1)
@@ -41,7 +41,7 @@ test4 = t.test(data[['genouPied/hauteur']], mu = 0.25)
 # Test 5 : epaules/hauteur == 0.25
 test5 = t.test(data[['epaules/hauteur']], mu = 0.25)
 
-# On utilise la méthode FDR
+# On utilise la méthode FDR pour tester plusieurs hypothèses en même temps
 pValues = c(test1$p.value, test2$p.value, test3$p.value, test4$p.value, test5$p.value)
 p.adjust(pValues, 'FDR')
 
